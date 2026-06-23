@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Jeux de Guémiz — L'actu en famille</title>
+<meta name="description" content="Jeu interactif familial : actualité Guadeloupe & monde, débats d'idées et quiz culture générale pour ados. Du lundi au samedi tout l'été.">
+<style>
+  :root{
+    --bleu:#0a6e8a; --bleu-fonce:#063b4d; --turquoise:#16c2c2; --sable:#f7efe2;
+    --soleil:#ffb627; --corail:#ff6b5e; --vert:#2bb673; --violet:#7c5cbf;
+    --txt:#0e2a33; --gris:#5a6b70; --ok:#2bb673; --ko:#ff6b5e; --blanc:#fff;
+    --ombre:0 8px 28px rgba(6,59,77,.14); --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--txt); background:linear-gradient(160deg,#0a6e8a 0%,#063b4d 100%);
+    min-height:100vh; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 16px 60px}
+  header.app{text-align:center;color:#fff;padding:30px 10px 14px}
+  header.app .logo{font-size:30px;font-weight:800;letter-spacing:.3px}
+  header.app .logo span{color:var(--soleil)}
+  header.app .tag{opacity:.9;font-size:15px;margin-top:4px}
+  .scorebar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 4px}
+  .pill{background:rgba(255,255,255,.14);color:#fff;border-radius:30px;padding:7px 16px;font-size:14px;font-weight:600;backdrop-filter:blur(4px)}
+  .pill b{color:var(--soleil)}
+  .card{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--ombre);padding:22px;margin:16px 0}
+  .weeksel{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:6px 0 2px}
+  .weeksel select{font-size:15px;padding:9px 12px;border-radius:12px;border:2px solid var(--turquoise);background:#fff;color:var(--bleu-fonce);font-weight:600}
+  .weektheme{text-align:center;color:#eaf7f7;font-size:14px;margin-top:6px;font-style:italic}
+  .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-top:6px}
+  .day{cursor:pointer;border:none;text-align:left;background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--ombre);transition:transform .15s, box-shadow .15s;position:relative;overflow:hidden}
+  .day:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(6,59,77,.22)}
+  .day .ico{font-size:30px}
+  .day .jour{font-weight:800;font-size:17px;margin-top:6px}
+  .day .lab{font-size:13px;color:var(--gris);margin-top:2px}
+  .day .strip{position:absolute;top:0;left:0;width:6px;height:100%}
+  .day.done::after{content:"✓";position:absolute;top:10px;right:12px;color:var(--vert);font-weight:800;font-size:18px}
+  .day.bonus{background:linear-gradient(135deg,#fff7e6,#ffe9c2)}
+  .badge{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--corail);border-radius:20px;padding:2px 9px;margin-left:6px;vertical-align:middle}
+  h2.sec{color:#fff;text-align:center;margin:24px 0 4px;font-size:20px}
+  .btn{display:inline-block;border:none;cursor:pointer;font-weight:700;font-size:15px;border-radius:12px;padding:12px 20px;transition:filter .15s, transform .1s}
+  .btn:active{transform:scale(.98)}
+  .btn-primary{background:var(--soleil);color:#3a2600}
+  .btn-primary:hover{filter:brightness(1.05)}
+  .btn-ghost{background:#eef4f5;color:var(--bleu-fonce)}
+  .btn-line{background:#fff;border:2px solid var(--turquoise);color:var(--bleu);}
+  .back{color:#dff6f6;background:none;border:none;cursor:pointer;font-size:15px;font-weight:600;margin:6px 0;padding:6px 2px}
+  .kicker{display:inline-block;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--bleu);background:#e2f6f6;padding:4px 10px;border-radius:20px}
+  .titre{font-size:23px;font-weight:800;margin:10px 0 4px;color:var(--bleu-fonce)}
+  .soustitre{color:var(--gris);font-size:15px;margin-bottom:10px}
+  .article p{margin:10px 0;font-size:16px}
+  .article h4{margin:16px 0 4px;color:var(--bleu)}
+  .saviez{background:#fff7e6;border-left:5px solid var(--soleil);padding:12px 14px;border-radius:10px;margin:14px 0;font-size:15px}
+  .saviez b{color:#b8780a}
+  .source{font-size:12px;color:var(--gris);margin-top:8px}
+  .source a{color:var(--bleu)}
+  /* Débat */
+  .debcols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .debcol{border-radius:14px;padding:14px}
+  .debcol.pour{background:#e9f8f0;border:2px solid var(--vert)}
+  .debcol.contre{background:#fdecea;border:2px solid var(--corail)}
+  .debcol h4{font-size:16px;margin-bottom:8px}
+  .debcol.pour h4{color:#1d8f5a}.debcol.contre h4{color:#d2483b}
+  .debcol ul{margin-left:18px;font-size:14px}.debcol li{margin:7px 0}
+  .prompts{background:#eef4f5;border-radius:12px;padding:14px;margin-top:8px}
+  .prompts h4{color:var(--bleu);margin-bottom:6px}
+  .prompts li{margin:6px 0 6px 18px}
+  /* Quiz */
+  .qbox{margin-top:6px}
+  .qcount{font-size:13px;color:var(--gris);font-weight:600}
+  .qbar{height:8px;background:#e7eef0;border-radius:8px;overflow:hidden;margin:8px 0 14px}
+  .qbar i{display:block;height:100%;background:var(--turquoise);transition:width .3s}
+  .qtxt{font-size:19px;font-weight:700;margin-bottom:14px;color:var(--bleu-fonce)}
+  .opts{display:grid;gap:10px}
+  .opt{text-align:left;border:2px solid #dbe6e8;background:#fff;border-radius:12px;padding:13px 15px;cursor:pointer;font-size:15px;transition:border-color .15s,background .15s}
+  .opt:hover{border-color:var(--turquoise)}
+  .opt.good{border-color:var(--ok);background:#e9f8f0}
+  .opt.bad{border-color:var(--ko);background:#fdecea}
+  .opt.dim{opacity:.55}
+  .feedback{margin-top:14px;padding:13px 15px;border-radius:12px;font-size:15px;display:none}
+  .feedback.show{display:block}
+  .feedback.r{background:#e9f8f0;border-left:5px solid var(--ok)}
+  .feedback.w{background:#fdecea;border-left:5px solid var(--ko)}
+  .result{text-align:center;padding:10px}
+  .result .big{font-size:46px;font-weight:800;color:var(--bleu)}
+  .result .med{font-size:18px;margin:6px 0;font-weight:700}
+  .stars{font-size:30px;letter-spacing:4px;margin:8px 0}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+  .note{background:#eef4f5;border-radius:12px;padding:12px 14px;font-size:14px;color:var(--gris);margin-top:10px}
+  .empty{text-align:center;color:#fff;padding:30px 16px}
+  footer{text-align:center;color:#cfeaea;font-size:13px;padding:20px}
+  footer a{color:#fff}
+  @media(max-width:560px){.debcols{grid-template-columns:1fr}.titre{font-size:20px}.qtxt{font-size:17px}}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <div class="logo">🌴 Les Jeux de <span>Guémiz</span></div>
+    <div class="tag">L'actu en famille — Guadeloupe & le monde · du lundi au samedi</div>
+    <div class="scorebar">
+      <span class="pill">⭐ Points : <b id="pts">0</b></span>
+      <span class="pill">🔥 Série : <b id="streak">0</b></span>
+      <span class="pill">🎖️ Niveau : <b id="rang">Mousse</b></span>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="weeksel">
+      <label style="color:#eaf7f7;font-weight:600">Semaine :</label>
+      <select id="weekSelect"></select>
+    </div>
+    <div class="weektheme" id="weekTheme"></div>
+    <h2 class="sec">Choisis ton défi du jour</h2>
+    <div class="days" id="dayGrid"></div>
+    <div class="card" style="text-align:center">
+      <b>Comment on joue ?</b>
+      <p style="margin-top:6px;color:var(--gris);font-size:15px">Chaque jour a son rendez-vous. On lit la présentation ou le débat ensemble, puis on répond au quiz. On cumule des points toute la semaine, et le <b>samedi</b> on relève le <b>Défi Famille bonus</b> qui récapitule tout. 🏆</p>
+    </div>
+  </section>
+
+  <!-- DAY VIEW -->
+  <section id="dayView" class="hidden">
+    <button class="back" onclick="goHome()">← Retour au menu</button>
+    <div id="dayContent"></div>
+  </section>
+</div>
+
+<footer>
+  Les Jeux de Guémiz · conçu pour apprendre en s'amusant ·
+  <a href="https://guehinadje-ic.github.io/ivoryconsulting/" target="_blank" rel="noopener">Ivory Consulting</a>
+</footer>
+
+<script>
+/* ============================================================
+   LES JEUX DE GUÉMIZ — moteur de jeu
+   Pour AJOUTER une semaine : copie un bloc "S2" dans l'objet DATA,
+   change le label/theme et remplis les 6 jours. Rien d'autre à toucher.
+   Type de jour : 'presentation' | 'debat' | 'quiz' | 'bonus'
+   ============================================================ */
+
+const DATA = {
+  /* ---------------- SEMAINE 1 ---------------- */
+  S1: {
+    label:"Semaine 1 — du 24 au 28 juin (lancement !)",
+    theme:"L'été où le monde bouge",
+    jours:{
+      lundi:{
+        type:"presentation", ico:"🏝️", couleur:"#0a6e8a",
+        lab:"Actu Locale", kicker:"Guadeloupe",
+        titre:"Chlordécone : la justice dit « non-lieu », la Guadeloupe dit « non »",
+        soustitre:"Un scandale environnemental et sanitaire qui dure depuis 50 ans.",
+        article:[
+          {h:"De quoi parle-t-on ?"},
+          {p:"Le chlordécone est un pesticide utilisé dans les bananeraies de Guadeloupe et de Martinique entre 1972 et 1993 pour lutter contre un insecte, le charançon. Problème : ce produit est très toxique et il reste dans les sols et l'eau pendant des centaines d'années. Aujourd'hui encore, plus de 9 adultes sur 10 ont des traces de chlordécone dans le sang aux Antilles."},
+          {h:"Que s'est-il passé en juin 2026 ?"},
+          {p:"Le 22 juin, la cour d'appel de Paris a confirmé un « non-lieu » : cela veut dire que la justice estime ne pas pouvoir organiser de procès pénal, notamment parce que les faits sont trop anciens (on parle de « prescription »). La décision a provoqué colère et incompréhension chez les victimes et de nombreux élus."},
+          {p:"Quelques semaines plus tôt, le 2 juin, une loi avait pourtant reconnu la « part de responsabilité de l'État » dans ce scandale. Deux signaux contradictoires la même année."},
+          {h:"Pourquoi c'est important ?"},
+          {p:"Cette histoire touche à la santé (risques de cancers), à l'environnement (sols pollués pour très longtemps), à la justice et à la mémoire d'un territoire. C'est un cas d'école pour comprendre comment une décision agricole peut avoir des conséquences sur plusieurs générations."}
+        ],
+        saviez:"Le chlordécone met environ <b>plusieurs siècles</b> à disparaître naturellement de la terre. Un sol pollué en 1980 le sera peut-être encore… en l'an 2400 !",
+        source:{txt:"Source : France Info La 1ère, juin 2026", url:"https://la1ere.franceinfo.fr/guadeloupe/non-lieu-confirme-dans-le-scandale-du-chlordecone-apres-l-indignation-la-determination-en-guadeloupe-1713373.html"},
+        quiz:[
+          {q:"Le chlordécone servait à protéger quelle culture ?",
+           opts:["Les bananeraies","La canne à sucre","Les caféiers","Les cocotiers"],correct:0,
+           exp:"Il était utilisé contre le charançon, un insecte qui attaque les bananiers."},
+          {q:"Pourquoi ce produit reste-t-il un problème aujourd'hui ?",
+           opts:["Il sent très mauvais","Il reste dans les sols et l'eau pendant des siècles","Il coûte cher","Il a changé de couleur"],correct:1,
+           exp:"Sa très grande persistance dans l'environnement est ce qui le rend si dangereux sur le long terme."},
+          {q:"Qu'a décidé la cour d'appel de Paris le 22 juin 2026 ?",
+           opts:["Une condamnation","Un non-lieu","Une amende record","Un nouveau procès"],correct:1,
+           exp:"Le non-lieu signifie qu'il n'y aura pas de procès pénal, en partie à cause de la prescription (faits trop anciens)."}
+        ]
+      },
+      mardi:{
+        type:"presentation", ico:"🌍", couleur:"#7c5cbf",
+        lab:"Le Monde en Bref", kicker:"International",
+        titre:"Coupe du Monde 2026 : le foot à l'échelle d'un continent",
+        soustitre:"Du 11 juin au 19 juillet, trois pays accueillent ensemble le plus grand Mondial de l'histoire.",
+        article:[
+          {h:"Un tournoi géant"},
+          {p:"La 23ᵉ Coupe du Monde masculine se joue pour la première fois dans trois pays à la fois : les États-Unis, le Canada et le Mexique. Elle réunit 48 équipes (au lieu de 32 avant) réparties dans 16 villes-hôtes. C'est le Mondial le plus grand jamais organisé."},
+          {h:"Aussi dans l'actu cette semaine"},
+          {p:"🇬🇧 Au Royaume-Uni, le Premier ministre Keir Starmer a démissionné le 22 juin. 🤝 Le 17 juin, un protocole d'accord a été signé pour mettre fin aux tensions entre les États-Unis et l'Iran, avec 60 jours de négociations prévues. 🇨🇴 En Colombie, une nouvelle présidente/un nouveau président a été élu(e) au second tour le 21 juin."},
+          {h:"Pourquoi en parler en famille ?"},
+          {p:"Le sport est une superbe porte d'entrée vers la géographie (où sont ces pays ?), l'économie (combien coûte un Mondial ?) et même la diplomatie (faire jouer des pays ensemble). Et ça donne envie de sortir l'atlas !"}
+        ],
+        saviez:"Avec 48 équipes, ce Mondial compte <b>104 matchs</b> au total — contre 64 lors des éditions précédentes. De quoi remplir tout l'été.",
+        source:{txt:"Sources : Wikipédia « Juin 2026 », Euronews", url:"https://fr.wikipedia.org/wiki/Juin_2026"},
+        quiz:[
+          {q:"Combien de pays organisent la Coupe du Monde 2026 ?",
+           opts:["Un seul","Deux","Trois","Cinq"],correct:2,
+           exp:"États-Unis, Canada et Mexique accueillent le tournoi ensemble : une première."},
+          {q:"Combien d'équipes participent à ce Mondial ?",
+           opts:["24","32","40","48"],correct:3,
+           exp:"On est passé de 32 à 48 équipes, d'où un tournoi beaucoup plus long."},
+          {q:"Quel dirigeant a démissionné le 22 juin 2026 ?",
+           opts:["Le Premier ministre britannique Keir Starmer","Le président français","Le chancelier allemand","Le président américain"],correct:0,
+           exp:"Keir Starmer, Premier ministre du Royaume-Uni, a quitté ses fonctions ce jour-là."}
+        ]
+      },
+      mercredi:{
+        type:"debat", ico:"💬", couleur:"#ff6b5e",
+        lab:"Le Grand Débat", kicker:"Débat d'idées",
+        titre:"Faut-il limiter l'usage de l'intelligence artificielle à l'école ?",
+        contexte:"En 2026, l'IA (ChatGPT et compagnie) est partout. Elle peut aider à apprendre… ou servir à tricher. Elle consomme aussi beaucoup d'énergie. À table, chacun choisit un camp et défend ses arguments. L'important n'est pas d'avoir raison, mais d'argumenter !",
+        pour:{
+          titre:"POUR limiter",
+          args:[
+            "Risque de triche : on rend un devoir qu'on n'a pas fait soi-même.",
+            "On peut perdre son esprit critique si la machine « pense » à notre place.",
+            "Coût écologique : une requête à une IA consomme jusqu'à 10 fois plus d'électricité qu'une recherche Google.",
+            "Risque de dépendance : on ne sait plus chercher ni réfléchir seul."
+          ]
+        },
+        contre:{
+          titre:"CONTRE limiter",
+          args:[
+            "L'IA est l'outil de demain : autant apprendre à bien s'en servir tôt.",
+            "Elle peut expliquer une leçon autrement, à son rythme, comme un tuteur patient.",
+            "Elle aide les élèves en difficulté (dyslexie, langues, révisions).",
+            "Interdire ne marche jamais vraiment : mieux vaut encadrer et éduquer."
+          ]
+        },
+        prompts:[
+          "Et toi, tu utiliserais l'IA pour un exposé ? Jusqu'où ?",
+          "Quelle règle simple proposerais-tu à un prof pour un usage « juste » de l'IA ?",
+          "Une IA peut-elle se tromper ? Comment vérifier ce qu'elle dit ?"
+        ],
+        points:15
+      },
+      jeudi:{
+        type:"quiz", ico:"🧠", couleur:"#16c2c2",
+        lab:"Quiz Actu", kicker:"Révise la semaine",
+        titre:"Quiz de l'actu — as-tu tout suivi ?",
+        soustitre:"Les réponses sont dans les rendez-vous de lundi, mardi et mercredi.",
+        quiz:[
+          {q:"Le chlordécone a été utilisé en Guadeloupe entre…",
+           opts:["1922 et 1945","1972 et 1993","2000 et 2015","Depuis 2020"],correct:1,
+           exp:"De 1972 à 1993, dans les bananeraies."},
+          {q:"La Coupe du Monde 2026 se termine le…",
+           opts:["19 juillet","1er juin","31 août","25 décembre"],correct:0,
+           exp:"Du 11 juin au 19 juillet 2026."},
+          {q:"Une requête à une IA consomme environ… qu'une recherche Google.",
+           opts:["2 fois moins","Pareil","Jusqu'à 10 fois plus","100 fois moins"],correct:2,
+           exp:"D'où le débat sur le coût écologique de l'IA."},
+          {q:"« Non-lieu » signifie…",
+           opts:["Une grosse amende","Pas de procès pénal","Une victoire des victimes","Un nouveau pesticide"],correct:1,
+           exp:"La justice estime qu'il n'y aura pas de procès pénal."},
+          {q:"Combien d'équipes au Mondial 2026 ?",
+           opts:["32","36","48","64"],correct:2,
+           exp:"48 équipes, un record."}
+        ]
+      },
+      vendredi:{
+        type:"quiz", ico:"📚", couleur:"#2bb673",
+        lab:"Culture G", kicker:"Culture générale · ados",
+        titre:"Quiz Culture Générale — utile pour la vie (et les contrôles !)",
+        soustitre:"Géo, sciences, histoire, arts : des repères qui resservent toute l'année.",
+        quiz:[
+          {q:"Le détroit d'Ormuz, souvent cité dans l'actu, est un passage stratégique pour…",
+           opts:["Le pétrole","Le café","Les bananes","Le tourisme spatial"],correct:0,
+           exp:"Une grande partie du pétrole mondial transite par ce détroit, entre le golfe Persique et l'océan."},
+          {q:"Les sargasses qui s'échouent en Guadeloupe sont…",
+           opts:["Des poissons","Des algues brunes","Des coquillages","Du sable noir"],correct:1,
+           exp:"Ce sont des algues. En se décomposant, elles dégagent des gaz et peuvent même fermer des écoles."},
+          {q:"La Sagrada Família, dont la plus haute tour a été inaugurée en juin 2026, se trouve à…",
+           opts:["Lisbonne","Rome","Barcelone","Athènes"],correct:2,
+           exp:"C'est le chef-d'œuvre de l'architecte Antoni Gaudí, à Barcelone, en construction depuis 1882 !"},
+          {q:"Le G7 réunit des pays surtout choisis pour leur…",
+           opts:["Population","Puissance économique","Équipe de foot","Climat"],correct:1,
+           exp:"Le G7 rassemble 7 grandes économies (France, USA, Royaume-Uni, Canada, Allemagne, Italie, Japon)."},
+          {q:"Un pesticide « persistant » comme le chlordécone est dangereux car il…",
+           opts:["Brille la nuit","Reste très longtemps dans la nature","Sent la banane","Disparaît en un jour"],correct:1,
+           exp:"« Persistant » = qui ne se dégrade presque pas avec le temps."},
+          {q:"La Guadeloupe est une région française située dans…",
+           opts:["L'océan Pacifique","La mer des Caraïbes","La Méditerranée","L'océan Indien"],correct:1,
+           exp:"C'est un archipel des Antilles, dans la mer des Caraïbes."}
+        ]
+      },
+      samedi:{
+        type:"bonus", ico:"🏆", couleur:"#ffb627",
+        lab:"Défi Famille", kicker:"BONUS du samedi",
+        titre:"Le Grand Défi Famille",
+        soustitre:"On récapitule la semaine ET on relève un défi spécial. Points doublés !",
+        recapTitre:"Manche 1 — Le récap de la semaine (points ×2)",
+        quiz:[
+          {q:"Quel territoire est au cœur du scandale du chlordécone ?",
+           opts:["La Corse","Les Antilles (Guadeloupe & Martinique)","La Bretagne","La Réunion"],correct:1,
+           exp:"Guadeloupe et Martinique, à cause des bananeraies."},
+          {q:"Le Mondial 2026 est co-organisé par USA, Mexique et…",
+           opts:["Le Brésil","Le Canada","Le Japon","L'Espagne"],correct:1,
+           exp:"USA + Canada + Mexique."},
+          {q:"Dans le débat de mercredi, on parlait de limiter quoi à l'école ?",
+           opts:["Les téléphones","L'intelligence artificielle","Le sport","Les devoirs"],correct:1,
+           exp:"L'usage de l'IA : aide ou triche ?"},
+          {q:"Les sargasses sont des…",
+           opts:["Algues","Insectes","Nuages","Roches"],correct:0,
+           exp:"Des algues brunes qui s'échouent sur les plages."},
+          {q:"La Sagrada Família se trouve dans quelle ville ?",
+           opts:["Madrid","Barcelone","Valence","Séville"],correct:1,
+           exp:"À Barcelone, œuvre de Gaudí."}
+        ],
+        defiTitre:"Manche 2 — Le Défi Express (sans points, juste pour le plaisir)",
+        defis:[
+          "🎤 <b>Débat éclair</b> : « Vaut-il mieux passer ses vacances à la plage ou à la montagne ? » Chacun a 60 secondes pour convaincre. La famille vote.",
+          "🧩 <b>Énigme caribéenne</b> : « Je suis verte avant, jaune pendant, et on me mange après. Qui suis-je ? » (Réponse : la banane 🍌)",
+          "🌍 <b>Défi géo</b> : citez à tour de rôle un pays qui borde la mer des Caraïbes. Le premier à sécher a un gage rigolo !"
+        ]
+      }
+    }
+  },
+
+  /* ---------------- SEMAINE 2 ---------------- */
+  S2: {
+    label:"Semaine 2 — du 29 juin au 4 juillet",
+    theme:"Mer, sport et grandes questions",
+    jours:{
+      lundi:{
+        type:"presentation", ico:"🏝️", couleur:"#0a6e8a",
+        lab:"Actu Locale", kicker:"Guadeloupe",
+        titre:"Sargasses : le fléau qui pourrait devenir une ressource",
+        soustitre:"Ces algues brunes empoisonnent le littoral… mais cachent peut-être un trésor.",
+        article:[
+          {h:"Un problème bien réel"},
+          {p:"En Guadeloupe, les sargasses (des algues brunes) s'échouent par bancs entiers sur les plages. En se décomposant, elles dégagent des gaz à l'odeur d'œuf pourri qui peuvent rendre l'air irrespirable. En mai 2026, plusieurs écoles de Petit-Bourg ont même dû fermer à cause de ces émanations. Au total, environ 12 % du littoral guadeloupéen est touché."},
+          {h:"Et si on en faisait quelque chose ?"},
+          {p:"Des chercheurs testent des manières de « valoriser » les sargasses : en faire du compost, du gaz (méthanisation), ou même du charbon végétal (biochar) capable de piéger jusqu'à 80 % du chlordécone dans les sols. Ces solutions existent mais restent encore au stade des essais."},
+          {h:"Le vrai défi"},
+          {p:"Ramasser les algues coûte cher, et il faut le faire vite avant qu'elles ne pourrissent. C'est un casse-tête entre santé publique, économie (tourisme, pêche) et écologie."}
+        ],
+        saviez:"Avec du charbon fabriqué à partir de sargasses, on peut piéger près de <b>80 % du chlordécone</b> présent dans un sol. Le fléau pourrait aider à réparer un autre fléau !",
+        source:{txt:"Sources : Karibinfo, Outremers360 (2025-2026)", url:"https://www.karibinfo.com/news/sargasses-quels-enjeux-economiques-en-guadeloupe-et-en-martinique/"},
+        quiz:[
+          {q:"Les sargasses dégagent une mauvaise odeur quand elles…",
+           opts:["Sont fraîches","Se décomposent","Sont dans l'eau","Sèchent au soleil"],correct:1,
+           exp:"En pourrissant, elles libèrent des gaz dangereux."},
+          {q:"Quelle solution est testée pour valoriser les sargasses ?",
+           opts:["En faire des bijoux","En faire du charbon (biochar)","Les envoyer dans l'espace","Les peindre"],correct:1,
+           exp:"Le biochar de sargasses peut même piéger le chlordécone."},
+          {q:"Quel pourcentage du littoral guadeloupéen est touché ?",
+           opts:["Environ 1 %","Environ 12 %","Environ 50 %","100 %"],correct:1,
+           exp:"Environ 12 %, soit à peu près 83 km de côtes."}
+        ]
+      },
+      mardi:{
+        type:"presentation", ico:"🌍", couleur:"#7c5cbf",
+        lab:"Le Monde en Bref", kicker:"International",
+        titre:"La planète foot retient son souffle : la finale approche",
+        soustitre:"Après un mois de matchs, le Mondial 2026 entre dans sa phase décisive.",
+        article:[
+          {h:"La fin du suspense"},
+          {p:"Début juillet, la Coupe du Monde 2026 arrive dans sa phase à élimination directe : chaque match peut être le dernier. Les 48 équipes du départ ne sont plus qu'une poignée à viser le titre, avant la finale du 19 juillet."},
+          {h:"Plus qu'un jeu"},
+          {p:"Un Mondial, c'est aussi des milliards d'euros d'économie, des millions de touristes, et de grandes questions : faut-il construire d'immenses stades ? Quel est l'impact écologique des déplacements ? Le sport peut-il rapprocher des pays qui s'entendent mal ?"},
+          {h:"Le savais-tu ?"},
+          {p:"La Coupe du Monde est l'événement le plus regardé de la planète, devant même les Jeux Olympiques. Des familles du monde entier se rassemblent devant le même match, à la même heure."}
+        ],
+        saviez:"La finale d'une Coupe du Monde peut être suivie par plus d'<b>1 milliard de personnes</b> en même temps : presque un humain sur huit !",
+        source:{txt:"Source : Wikipédia « Juin 2026 »", url:"https://fr.wikipedia.org/wiki/Juin_2026"},
+        quiz:[
+          {q:"En phase à élimination directe, une équipe qui perd…",
+           opts:["Rejoue le lendemain","Est éliminée","Gagne un point","Change de pays"],correct:1,
+           exp:"C'est tout ou rien : le perdant est éliminé."},
+          {q:"Quel événement est le plus regardé au monde ?",
+           opts:["La Coupe du Monde de foot","Un concert","Une élection","Un lancement de fusée"],correct:0,
+           exp:"Devant même les Jeux Olympiques."},
+          {q:"La finale du Mondial 2026 a lieu le…",
+           opts:["19 juillet","1er juillet","14 juillet","31 août"],correct:0,
+           exp:"Le 19 juillet 2026."}
+        ]
+      },
+      mercredi:{
+        type:"debat", ico:"💬", couleur:"#ff6b5e",
+        lab:"Le Grand Débat", kicker:"Débat d'idées",
+        titre:"Les réseaux sociaux avant 15 ans : pour ou contre ?",
+        contexte:"Instagram, TikTok, Snapchat… À partir de quel âge devrait-on pouvoir s'y inscrire ? Plusieurs pays en débattent. En famille, défendez chacun un point de vue, même si ce n'est pas le vôtre : c'est ça, savoir argumenter.",
+        pour:{
+          titre:"POUR un accès libre",
+          args:[
+            "Rester en lien avec ses amis et sa famille, même loin (utile aux Antilles !).",
+            "Découvrir des passions, apprendre, créer (montage, dessin, musique).",
+            "Interdire pousse souvent à contourner en cachette, donc sans protection.",
+            "Apprendre jeune à gérer son image en ligne, accompagné par les parents."
+          ]
+        },
+        contre:{
+          titre:"POUR attendre 15 ans",
+          args:[
+            "Le cerveau d'un ado est très sensible aux « likes » et à la comparaison.",
+            "Risques : harcèlement, mauvaises rencontres, fausses informations.",
+            "Temps d'écran qui grignote le sommeil, le sport et les devoirs.",
+            "Les algorithmes sont conçus pour capter l'attention le plus longtemps possible."
+          ]
+        },
+        prompts:[
+          "Quelle règle « écran » serait juste chez vous, selon toi ?",
+          "As-tu déjà vu une info fausse sur un réseau ? Comment l'as-tu repérée ?",
+          "Un like, ça fait du bien : mais pourquoi notre cerveau adore ça ?"
+        ],
+        points:15
+      },
+      jeudi:{
+        type:"quiz", ico:"🧠", couleur:"#16c2c2",
+        lab:"Quiz Actu", kicker:"Révise la semaine",
+        titre:"Quiz de l'actu — semaine 2",
+        soustitre:"Tout est dans les rendez-vous de lundi, mardi et mercredi.",
+        quiz:[
+          {q:"Les sargasses sont un problème surtout quand elles…",
+           opts:["Flottent au large","Se décomposent sur la plage","Sont vertes","Gèlent"],correct:1,
+           exp:"En pourrissant elles dégagent des gaz toxiques."},
+          {q:"Le Mondial 2026 se termine par une finale le…",
+           opts:["19 juillet","1er août","30 juin","25 juillet"],correct:0,exp:"Le 19 juillet."},
+          {q:"Dans le débat, on discutait de l'âge pour…",
+           opts:["Conduire","Les réseaux sociaux","Voter","Travailler"],correct:1,
+           exp:"Réseaux sociaux avant 15 ans : pour ou contre ?"},
+          {q:"Le biochar de sargasses peut piéger une partie de quel polluant ?",
+           opts:["Le plastique","Le chlordécone","Le CO2 uniquement","Le sable"],correct:1,
+           exp:"Jusqu'à 80 % du chlordécone d'un sol."},
+          {q:"Les algorithmes des réseaux sont surtout conçus pour…",
+           opts:["Nous faire dormir","Capter notre attention longtemps","Nous apprendre les maths","Économiser la batterie"],correct:1,
+           exp:"Plus on reste, plus la plateforme gagne."}
+        ]
+      },
+      vendredi:{
+        type:"quiz", ico:"📚", couleur:"#2bb673",
+        lab:"Culture G", kicker:"Culture générale · ados",
+        titre:"Quiz Culture Générale — repères utiles",
+        soustitre:"Sciences du cerveau, géo, et un peu d'histoire.",
+        quiz:[
+          {q:"Quand on reçoit un « like », notre cerveau libère surtout…",
+           opts:["De la dopamine","De l'eau","Du sucre","De l'air"],correct:0,
+           exp:"La dopamine, molécule du plaisir et de la motivation — d'où l'effet « addictif »."},
+          {q:"Combien de continents compte la Terre ?",
+           opts:["4","5","6 ou 7 selon les conventions","12"],correct:2,
+           exp:"On en compte 6 ou 7 selon qu'on sépare ou non les Amériques."},
+          {q:"La mer des Caraïbes fait partie de quel océan ?",
+           opts:["Pacifique","Atlantique","Indien","Arctique"],correct:1,
+           exp:"C'est une mer rattachée à l'océan Atlantique."},
+          {q:"Le sommeil sert surtout à…",
+           opts:["Perdre du temps","Consolider la mémoire et récupérer","Grandir les ongles","Rien du tout"],correct:1,
+           exp:"On « range » nos apprentissages de la journée pendant le sommeil."},
+          {q:"Un « algorithme », c'est…",
+           opts:["Un animal","Une suite d'instructions pour résoudre un problème","Une planète","Un instrument de musique"],correct:1,
+           exp:"Une recette d'étapes, suivie par un ordinateur."},
+          {q:"Quelle énergie est renouvelable ?",
+           opts:["Le charbon","Le pétrole","Le solaire","Le gaz"],correct:2,
+           exp:"Le soleil ne s'épuise pas à notre échelle, contrairement aux énergies fossiles."}
+        ]
+      },
+      samedi:{
+        type:"bonus", ico:"🏆", couleur:"#ffb627",
+        lab:"Défi Famille", kicker:"BONUS du samedi",
+        titre:"Le Grand Défi Famille — semaine 2",
+        soustitre:"Récap de la semaine (points ×2) + défi spécial.",
+        recapTitre:"Manche 1 — Le récap (points ×2)",
+        quiz:[
+          {q:"Les sargasses sont des algues de quelle couleur ?",
+           opts:["Brunes","Roses","Bleues","Transparentes"],correct:0,exp:"Des algues brunes."},
+          {q:"Quel sentiment chimique provoque un « like » ?",
+           opts:["La dopamine","La colère","La faim","La soif"],correct:0,exp:"La dopamine, molécule du plaisir."},
+          {q:"La mer des Caraïbes appartient à l'océan…",
+           opts:["Atlantique","Pacifique","Indien","Arctique"],correct:0,exp:"Atlantique."},
+          {q:"Le Mondial 2026 a combien d'équipes ?",
+           opts:["48","32","16","64"],correct:0,exp:"48 équipes."},
+          {q:"Le sommeil aide surtout à…",
+           opts:["Consolider la mémoire","Grandir les cheveux","Maigrir","Rien"],correct:0,exp:"À mémoriser et récupérer."}
+        ],
+        defiTitre:"Manche 2 — Le Défi Express",
+        defis:[
+          "🎤 <b>Débat éclair</b> : « Pour bien apprendre, vaut-il mieux le matin ou le soir ? » 60 s chacun, la famille vote.",
+          "🧩 <b>Énigme</b> : « Plus j'ai de gardiens, moins je suis en sécurité. » Qui suis-je ? (Réponse : un secret 🤫)",
+          "🧠 <b>Défi mémoire</b> : citez à tour de rôle un mot appris cette semaine (sargasse, dopamine, algorithme…). Celui qui sèche a un gage !"
+        ]
+      }
+    }
+  }
+};
+
+/* ====== Calendrier éditorial pour le reste de l'été (à compléter chaque semaine) ====== */
+/* Voir le fichier PLAN-EDITORIAL.md livré avec le jeu pour les thèmes des semaines 3 à 10. */
+
+/* ========================= MOTEUR ========================= */
+const JOURS = ["lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const RANGS = [[0,"Mousse"],[60,"Matelot"],[150,"Navigateur"],[300,"Capitaine"],[500,"Amiral des Antilles"]];
+
+let state = load();
+function load(){
+  try{ return JSON.parse(localStorage.getItem("guemiz")) || {pts:0,streak:0,done:{}}; }
+  catch(e){ return {pts:0,streak:0,done:{}}; }
+}
+function save(){ try{ localStorage.setItem("guemiz", JSON.stringify(state)); }catch(e){ /* mode privé / file:// : on continue sans sauvegarde */ } }
+
+function rang(p){ let r="Mousse"; for(const [s,n] of RANGS){ if(p>=s) r=n; } return r; }
+function refreshScore(){
+  document.getElementById("pts").textContent = state.pts;
+  document.getElementById("streak").textContent = state.streak;
+  document.getElementById("rang").textContent = rang(state.pts);
+}
+function addPts(n){ state.pts += n; save(); refreshScore(); }
+
+let currentWeek = Object.keys(DATA)[0];
+
+function initWeeks(){
+  const sel = document.getElementById("weekSelect");
+  sel.innerHTML = "";
+  Object.keys(DATA).forEach(k=>{
+    const o=document.createElement("option"); o.value=k; o.textContent=DATA[k].label; sel.appendChild(o);
+  });
+  sel.value = currentWeek;
+  sel.onchange = ()=>{ currentWeek=sel.value; renderHome(); };
+}
+
+function renderHome(){
+  document.getElementById("home").classList.remove("hidden");
+  document.getElementById("dayView").classList.add("hidden");
+  document.getElementById("weekTheme").textContent = "« "+DATA[currentWeek].theme+" »";
+  const grid=document.getElementById("dayGrid"); grid.innerHTML="";
+  JOURS.forEach(j=>{
+    const d=DATA[currentWeek].jours[j]; if(!d) return;
+    const key=currentWeek+"_"+j;
+    const b=document.createElement("button");
+    b.className="day"+(d.type==="bonus"?" bonus":"")+(state.done[key]?" done":"");
+    b.onclick=()=>openDay(j);
+    b.innerHTML=`<span class="strip" style="background:${d.couleur}"></span>
+      <div class="ico">${d.ico}</div>
+      <div class="jour">${j.charAt(0).toUpperCase()+j.slice(1)}${d.type==="bonus"?'<span class="badge">BONUS</span>':''}</div>
+      <div class="lab">${d.lab}</div>`;
+    grid.appendChild(b);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function goHome(){ renderHome(); }
+
+function openDay(j){
+  const d=DATA[currentWeek].jours[j];
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("dayView").classList.remove("hidden");
+  const c=document.getElementById("dayContent");
+  if(d.type==="presentation") c.innerHTML=renderPresentation(d,j);
+  else if(d.type==="debat") c.innerHTML=renderDebat(d,j);
+  else if(d.type==="quiz") renderQuizPage(d,j,c);
+  else if(d.type==="bonus") renderBonus(d,j,c);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function articleHTML(arr){
+  return arr.map(x=> x.h? `<h4>${x.h}</h4>` : `<p>${x.p}</p>`).join("");
+}
+
+function renderPresentation(d,j){
+  const id="q_"+currentWeek+"_"+j;
+  return `<div class="card">
+    <span class="kicker">${d.kicker}</span>
+    <div class="titre">${d.titre}</div>
+    <div class="soustitre">${d.soustitre}</div>
+    <div class="article">${articleHTML(d.article)}</div>
+    <div class="saviez">💡 <b>Le savais-tu ?</b> ${d.saviez}</div>
+    ${d.source?`<div class="source">📰 ${d.source.txt} — <a href="${d.source.url}" target="_blank" rel="noopener">lire la source</a></div>`:""}
+  </div>
+  <div class="card">
+    <b style="color:var(--bleu)">🎯 À toi de jouer : le mini-quiz</b>
+    <div id="${id}"></div>
+  </div>` + mountQuizScript(d.quiz, id, j, 10);
+}
+
+function renderDebat(d,j){
+  const key=currentWeek+"_"+j;
+  return `<div class="card">
+    <span class="kicker">${d.kicker}</span>
+    <div class="titre">${d.titre}</div>
+    <div class="note">${d.contexte}</div>
+    <div class="debcols">
+      <div class="debcol pour"><h4>✅ ${d.pour.titre}</h4><ul>${d.pour.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+      <div class="debcol contre"><h4>⛔ ${d.contre.titre}</h4><ul>${d.contre.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+    </div>
+    <div class="prompts"><h4>🗣️ Pour aller plus loin (en famille)</h4><ul>${d.prompts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="finishDebat('${key}',${d.points})">On a débattu ! (+${d.points} pts)</button>
+      <button class="btn btn-ghost" onclick="goHome()">Retour</button>
+    </div>
+    <div id="debdone" class="feedback r" style="margin-top:14px"></div>
+  </div>`;
+}
+function finishDebat(key,pts){
+  if(!state.done[key]){ state.done[key]=true; addPts(pts); }
+  const el=document.getElementById("debdone");
+  el.classList.add("show"); el.innerHTML="🎉 Bravo, argumenter c'est déjà gagner ! Points ajoutés. Rendez-vous demain.";
+}
+
+/* ---- Quiz engine partagé ---- */
+function renderQuizPage(d,j,c){
+  const id="q_"+currentWeek+"_"+j;
+  c.innerHTML=`<div class="card">
+    <span class="kicker">${d.kicker}</span>
+    <div class="titre">${d.titre}</div>
+    <div class="soustitre">${d.soustitre||""}</div>
+    <div id="${id}"></div>
+  </div>`;
+  runQuiz(d.quiz,id,j,10,false);
+}
+
+function mountQuizScript(quiz,id,j,ptsPer){
+  // returns empty; we run after innerHTML set via microtask
+  setTimeout(()=>runQuiz(quiz,id,j,ptsPer,false),0);
+  return "";
+}
+
+function runQuiz(quiz,containerId,jourKey,ptsPer,isBonus){
+  const host=document.getElementById(containerId);
+  if(!host) return;
+  let i=0, correct=0, locked=false;
+  const key=currentWeek+"_"+jourKey;
+  function draw(){
+    if(!document.getElementById(containerId)) return;
+    locked=false;
+    const q=quiz[i];
+    host.innerHTML=`<div class="qbox">
+      <div class="qcount">Question ${i+1} / ${quiz.length}</div>
+      <div class="qbar"><i style="width:${(i/quiz.length)*100}%"></i></div>
+      <div class="qtxt">${q.q}</div>
+      <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join("")}</div>
+      <div class="feedback" id="fb"></div>
+      <div class="row" id="navrow"></div>
+    </div>`;
+    host.querySelectorAll(".opt").forEach(btn=>{
+      btn.onclick=()=>choose(parseInt(btn.dataset.k),q);
+    });
+  }
+  function choose(k,q){
+    if(locked) return; locked=true;
+    const opts=host.querySelectorAll(".opt");
+    opts.forEach((b,idx)=>{
+      if(idx===q.correct) b.classList.add("good");
+      else if(idx===k) b.classList.add("bad");
+      else b.classList.add("dim");
+      b.disabled=true;
+    });
+    const fb=host.querySelector("#fb");
+    if(k===q.correct){ correct++; fb.className="feedback show r"; fb.innerHTML="✅ Bonne réponse ! "+q.exp; }
+    else { fb.className="feedback show w"; fb.innerHTML="❌ Pas tout à fait. "+q.exp; }
+    const nav=host.querySelector("#navrow");
+    nav.innerHTML=`<button class="btn btn-primary" id="next">${i+1<quiz.length?"Question suivante →":"Voir mon score 🏁"}</button>`;
+    host.querySelector("#next").onclick=()=>{ i++; if(i<quiz.length) draw(); else finish(); };
+  }
+  function finish(){
+    const gained = correct*ptsPer*(isBonus?2:1);
+    const first = !state.done[key];
+    if(first){ state.done[key]=true; addPts(gained);
+      if(correct===quiz.length) state.streak++; else state.streak=0; save(); refreshScore();
+    }
+    const ratio=correct/quiz.length;
+    const stars = ratio===1?"⭐⭐⭐":ratio>=0.6?"⭐⭐":ratio>0?"⭐":"➖";
+    const msg = ratio===1?"Sans faute, chapeau !":ratio>=0.6?"Beau score, continue !":"On révise et on y retourne !";
+    host.innerHTML=`<div class="result">
+      <div class="big">${correct}/${quiz.length}</div>
+      <div class="stars">${stars}</div>
+      <div class="med">${msg}</div>
+      ${first?`<div class="note">+${gained} points ${isBonus?"(bonus ×2 !)":""}</div>`:`<div class="note">Déjà joué — pas de points en double, mais rejoue autant que tu veux 😉</div>`}
+      <div class="row">
+        <button class="btn btn-line" id="replay">Rejouer</button>
+        <button class="btn btn-primary" onclick="goHome()">Retour au menu</button>
+      </div>
+    </div>`;
+    host.querySelector("#replay").onclick=()=>{ i=0;correct=0; draw(); };
+  }
+  draw();
+}
+
+function renderBonus(d,j,c){
+  const id="bonusq_"+currentWeek;
+  c.innerHTML=`<div class="card" style="background:linear-gradient(135deg,#fff7e6,#ffe9c2)">
+    <span class="kicker" style="background:#ffe1a8;color:#8a5a00">${d.kicker}</span>
+    <div class="titre">${d.titre}</div>
+    <div class="soustitre">${d.soustitre}</div>
+  </div>
+  <div class="card">
+    <b style="color:var(--bleu)">${d.recapTitre}</b>
+    <div id="${id}"></div>
+  </div>
+  <div class="card">
+    <b style="color:var(--corail)">${d.defiTitre}</b>
+    <ul style="margin:10px 0 0 18px">${d.defis.map(x=>`<li style="margin:10px 0">${x}</li>`).join("")}</ul>
+    <div class="row"><button class="btn btn-primary" onclick="goHome()">Terminer la semaine 🎉</button></div>
+  </div>`;
+  runQuiz(d.quiz,id,j,10,true);
+}
+
+/* ============ INIT ============ */
+initWeeks();
+refreshScore();
+renderHome();
+</script>
+</body>
+</html>
