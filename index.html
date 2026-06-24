@@ -67,6 +67,10 @@
   .debcol ul{margin-left:18px;font-size:14px}.debcol li{margin:7px 0}
   .debteaser{background:#eef4f5;border:2px dashed var(--turquoise);border-radius:14px;padding:18px 16px;text-align:center;margin:14px 0}
   .debteaser p{margin:8px 0 14px;color:var(--gris);font-size:15px}
+  .codewrap{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .codewrap input{font-size:16px;padding:11px 14px;border-radius:12px;border:2px solid var(--turquoise);min-width:170px;text-align:center}
+  .codemsg{margin-top:10px;font-size:14px;font-weight:600;min-height:18px}
+  .codemsg.ko{color:var(--ko)}
   .prompts{background:#eef4f5;border-radius:12px;padding:14px;margin-top:8px}
   .prompts h4{color:var(--bleu);margin-bottom:6px}
   .prompts li{margin:6px 0 6px 18px}
@@ -581,9 +585,9 @@ function renderPresentation(d,j){
   </div>` + mountQuizScript(d.quiz, id, j, 10);
 }
 
+const DEBAT_CODE = "Gokreyo225"; // code parental pour déverrouiller les arguments du débat
 function renderDebat(d,j){
   const key=currentWeek+"_"+j;
-  const seen = !!state.done[key];
   const argsHTML = `<div class="debcol pour"><h4>✅ ${d.pour.titre}</h4><ul>${d.pour.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>
       <div class="debcol contre"><h4>⛔ ${d.contre.titre}</h4><ul>${d.contre.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>`;
   return `<div class="card">
@@ -591,17 +595,29 @@ function renderDebat(d,j){
     <div class="titre">${d.titre}</div>
     <div class="note">${d.contexte}</div>
     <div class="prompts"><h4>🗣️ On débat d'abord en famille (à voix haute)</h4><ul>${d.prompts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
-    <div id="debteaser" class="debteaser" style="display:${seen?'none':'block'}">
-      <div style="font-size:36px">🤔💬</div>
-      <p><b>À vous de jouer !</b> Chacun choisit un camp et défend ses idées avec ses propres mots. Quand vous avez bien débattu, révélez les arguments préparés pour les comparer.</p>
-      <button class="btn btn-primary" onclick="revealDebat('${key}',${d.points})">🔓 On a débattu — révéler les arguments (+${d.points} pts)</button>
+    <div id="debteaser" class="debteaser">
+      <div style="font-size:36px">🔒</div>
+      <p><b>Arguments protégés par un code.</b> Débattez d'abord en famille avec vos propres idées. Ensuite, un parent saisit le <b>code secret</b> pour révéler les arguments préparés et les comparer.</p>
+      <div class="codewrap">
+        <input id="debcode" type="password" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Code secret…" onkeydown="if(event.key==='Enter')revealDebat('${key}',${d.points})">
+        <button class="btn btn-primary" onclick="revealDebat('${key}',${d.points})">🔓 Déverrouiller (+${d.points} pts)</button>
+      </div>
+      <div id="debcodemsg" class="codemsg"></div>
     </div>
-    <div id="debargs" class="debcols" style="display:${seen?'grid':'none'}">${argsHTML}</div>
-    <div id="debdone" class="feedback r ${seen?'show':''}" style="margin-top:14px">${seen?'✅ Arguments révélés — compare-les avec vos idées de famille !':''}</div>
+    <div id="debargs" class="debcols" style="display:none">${argsHTML}</div>
+    <div id="debdone" class="feedback r" style="margin-top:14px"></div>
     <div class="row" style="margin-top:14px"><button class="btn btn-ghost" onclick="goHome()">Retour au menu</button></div>
   </div>`;
 }
 function revealDebat(key,pts){
+  const input=document.getElementById("debcode");
+  const msg=document.getElementById("debcodemsg");
+  const val=input?(input.value||"").trim():"";
+  if(val!==DEBAT_CODE){
+    if(msg){ msg.className="codemsg ko"; msg.textContent="❌ Code incorrect. Demande-le à un parent."; }
+    if(input){ input.focus(); input.select(); }
+    return;
+  }
   const teaser=document.getElementById("debteaser");
   const args=document.getElementById("debargs");
   if(teaser) teaser.style.display="none";
@@ -609,7 +625,7 @@ function revealDebat(key,pts){
   if(!state.done[key]){ state.done[key]=true; addPts(pts); }
   const el=document.getElementById("debdone");
   el.classList.add("show");
-  el.innerHTML="🎉 Bravo ! Argumenter soi-même, c'est déjà gagner. Compare maintenant tes idées avec les arguments préparés.";
+  el.innerHTML="🎉 Code validé ! Compare maintenant tes idées avec les arguments préparés.";
 }
 
 /* ---- Quiz engine partagé ---- */
