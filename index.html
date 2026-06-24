@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Les Jeux de Guémiz — L'actu en famille</title>
+<title>Les Jeux de GUEMIZ — L'actu en famille</title>
 <meta name="description" content="Jeu interactif familial : actualité Guadeloupe & monde, débats d'idées et quiz culture générale pour ados. Du lundi au samedi tout l'été.">
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 <style>
   :root{
     --bleu:#0a6e8a; --bleu-fonce:#063b4d; --turquoise:#16c2c2; --sable:#f7efe2;
@@ -99,17 +101,78 @@
   .empty{text-align:center;color:#fff;padding:30px 16px}
   footer{text-align:center;color:#cfeaea;font-size:13px;padding:20px}
   footer a{color:#fff}
-  @media(max-width:560px){.debcols{grid-template-columns:1fr}.titre{font-size:20px}.qtxt{font-size:17px}}
+  /* Profils / login */
+  .profiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:6px}
+  .prof{cursor:pointer;border:none;border-radius:16px;padding:18px 10px;color:#fff;font-weight:800;font-size:17px;box-shadow:var(--ombre);transition:transform .12s}
+  .prof:hover{transform:translateY(-3px)}
+  .prof .pemoji{font-size:34px;display:block;margin-bottom:6px}
+  .profbar{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .proftag{background:rgba(255,255,255,.16);color:#fff;border-radius:30px;padding:6px 14px;font-weight:700;font-size:14px}
+  .profbar button{background:rgba(255,255,255,.16);color:#fff;border:none;border-radius:30px;padding:6px 14px;font-weight:600;font-size:13px;cursor:pointer}
+  .profbar button:hover{background:rgba(255,255,255,.28)}
+  /* Overlay / modal */
+  .overlay{position:fixed;inset:0;background:rgba(6,40,52,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .modal{background:#fff;border-radius:var(--radius);padding:22px;max-width:460px;width:100%;position:relative;box-shadow:var(--ombre)}
+  .modalclose{position:absolute;top:12px;right:14px;border:none;background:#eef4f5;border-radius:50%;width:32px;height:32px;cursor:pointer;font-weight:700;color:var(--gris)}
+  .brow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;margin:8px 0;background:#f5f9fa}
+  .brow .rank{font-weight:800;width:26px;color:var(--gris)}
+  .brow .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex:0 0 auto}
+  .brow .bn{font-weight:700;flex:1}
+  .brow .bs{font-weight:800;color:var(--bleu)}
+  .brow.me{outline:2px solid var(--turquoise)}
+  /* Multijoueur / Kahoot */
+  .mpchoice{display:grid;gap:12px;margin-top:8px}
+  .bigbtn{border:none;cursor:pointer;border-radius:16px;padding:18px;font-size:17px;font-weight:800;color:#fff;text-align:left;box-shadow:var(--ombre)}
+  .bigbtn small{display:block;font-weight:500;font-size:13px;opacity:.92;margin-top:3px}
+  .bigbtn.host{background:linear-gradient(135deg,#7c5cbf,#16c2c2)}
+  .bigbtn.join{background:linear-gradient(135deg,#0a6e8a,#16c2c2)}
+  .pin{font-size:40px;font-weight:800;letter-spacing:8px;color:var(--bleu-fonce);text-align:center;margin:6px 0}
+  .pinbox{background:#eef9f9;border:2px dashed var(--turquoise);border-radius:14px;padding:14px;text-align:center}
+  .pininput{font-size:30px;letter-spacing:10px;text-align:center;width:170px;padding:10px;border-radius:12px;border:2px solid var(--turquoise)}
+  .players{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+  .pchip{background:#eef4f5;border-radius:30px;padding:7px 14px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px}
+  .pchip .dot{width:14px;height:14px;border-radius:50%}
+  .kopts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .kopt{border:none;cursor:pointer;border-radius:14px;padding:20px 14px;font-size:16px;font-weight:700;color:#fff;min-height:74px;text-align:left;transition:transform .1s}
+  .kopt:active{transform:scale(.98)}
+  .kopt:disabled{cursor:default}
+  .kopt.k0{background:#e8554e}.kopt.k1{background:#1f7fc2}.kopt.k2{background:#e0a31e}.kopt.k3{background:#2b8f5f}
+  .kopt.faded{opacity:.35}
+  .kopt.win{outline:4px solid #16331f;box-shadow:0 0 0 3px #fff inset}
+  .ktimer{height:14px;border-radius:10px;background:#e7eef0;overflow:hidden;margin:10px 0}
+  .ktimer i{display:block;height:100%;background:linear-gradient(90deg,#2bb673,#ffb627,#ff6b5e);transition:width .25s linear}
+  .ktime{text-align:center;font-weight:800;font-size:20px;color:var(--bleu-fonce)}
+  .podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:16px 0}
+  .pod{border-radius:12px 12px 0 0;color:#fff;text-align:center;padding:10px 8px;font-weight:800;min-width:84px}
+  .pod .pm{font-size:24px}
+  .pod.p1{background:#ffb627;height:120px}.pod.p2{background:#9fb3bb;height:96px}.pod.p3{background:#cd8e5e;height:78px}
+  @media(max-width:560px){.debcols{grid-template-columns:1fr}.titre{font-size:20px}.qtxt{font-size:17px}.kopts{grid-template-columns:1fr}}
   .hidden{display:none}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+  <!-- LOGIN / PROFILS -->
+  <section id="login">
+    <header class="app">
+      <div class="logo">🌴 Les Jeux de <span>GUEMIZ</span></div>
+      <div class="tag">L'actu en famille — Guadeloupe & le monde</div>
+    </header>
+    <div class="card" style="text-align:center">
+      <b style="font-size:18px;color:var(--bleu-fonce)">Qui joue ?</b>
+      <p style="margin:6px 0 14px;color:var(--gris);font-size:15px">Choisis ton profil pour suivre tes points. Tout le monde partage le même classement. 🏆</p>
+      <div class="profiles" id="profileGrid"></div>
+    </div>
+  </section>
+
+  <!-- APPLICATION -->
+  <div id="app" class="hidden">
   <header class="app">
-    <div class="logo">🌴 Les Jeux de <span>Guémiz</span></div>
-    <div class="tag">L'actu en famille — Guadeloupe & le monde · du lundi au samedi</div>
+    <div class="logo">🌴 Les Jeux de <span>GUEMIZ</span></div>
+    <div class="profbar" id="profBar"></div>
     <div class="scorebar">
-      <span class="pill">⭐ Points : <b id="pts">0</b></span>
+      <span class="pill">⭐ Mes points : <b id="pts">0</b></span>
       <span class="pill">🔥 Série : <b id="streak">0</b></span>
       <span class="pill">🎖️ Niveau : <b id="rang">Mousse</b></span>
     </div>
@@ -135,11 +198,24 @@
     <button class="back" onclick="goHome()">← Retour au menu</button>
     <div id="dayContent"></div>
   </section>
+  </div><!-- /#app -->
+
+  <!-- LEADERBOARD -->
+  <div id="boardOverlay" class="overlay hidden" onclick="if(event.target===this)closeBoard()">
+    <div class="modal">
+      <button class="modalclose" onclick="closeBoard()">✕</button>
+      <h3 style="text-align:center;color:var(--bleu-fonce);margin-bottom:4px">🏅 Classement de la famille</h3>
+      <div id="boardList"></div>
+      <div style="text-align:center;margin-top:14px">
+        <button class="btn btn-line" onclick="resetScores()">♻️ Remettre les scores à zéro</button>
+        <div id="resetMsg" class="codemsg" style="text-align:center"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <footer>
-  Les Jeux de Guémiz · conçu pour apprendre en s'amusant ·
-  <a href="https://guehinadje-ic.github.io/ivoryconsulting/" target="_blank" rel="noopener">Ivory Consulting</a>
+  GUEMIZ4ever · conçu pour apprendre en s'amusant 🌴
 </footer>
 
 <script>
@@ -504,20 +580,105 @@ const DATA = {
 const JOURS = ["lundi","mardi","mercredi","jeudi","vendredi","samedi"];
 const RANGS = [[0,"Mousse"],[60,"Matelot"],[150,"Navigateur"],[300,"Capitaine"],[500,"Amiral des Antilles"]];
 
-let state = load();
-function load(){
-  try{ return JSON.parse(localStorage.getItem("guemiz")) || {pts:0,streak:0,done:{}}; }
-  catch(e){ return {pts:0,streak:0,done:{}}; }
-}
-function save(){ try{ localStorage.setItem("guemiz", JSON.stringify(state)); }catch(e){ /* mode privé / file:// : on continue sans sauvegarde */ } }
+/* ===== PROFILS + FIREBASE (scores partagés en temps réel) ===== */
+const PROFILES = [
+  {id:'nadjedi', name:'Nadjédi', emoji:'🦁', color:'#ef8b1f'},
+  {id:'dreymimi', name:'DreyMimi', emoji:'🦋', color:'#7c5cbf'},
+  {id:'nanou', name:'Nanou', emoji:'🐬', color:'#0f9bb0'},
+  {id:'shadou', name:'Shadou', emoji:'🔥', color:'#ff6b5e'}
+];
+function profById(id){ return PROFILES.find(p=>p.id===id)||{name:id,emoji:'🙂',color:'#888'}; }
+
+const firebaseConfig = {
+  apiKey:"AIzaSyC57k_IeAp37d2DsFkCo8qOun04pkxJYY0",
+  authDomain:"guemiz4ever.firebaseapp.com",
+  databaseURL:"https://guemiz4ever-default-rtdb.firebaseio.com",
+  projectId:"guemiz4ever",
+  storageBucket:"guemiz4ever.firebasestorage.app",
+  messagingSenderId:"88411809463",
+  appId:"1:88411809463:web:07f232cb7d4f9ab887cf32"
+};
+let db=null, serverOffset=0, scores={};
+try{
+  firebase.initializeApp(firebaseConfig);
+  db=firebase.database();
+  db.ref('/guemiz/scores').on('value', s=>{ scores=s.val()||{}; refreshScore(); if(boardOpen) renderBoard(); });
+  db.ref('.info/serverTimeOffset').on('value', s=>{ serverOffset=s.val()||0; });
+}catch(e){ db=null; }
+function nowTs(){ return Date.now()+serverOffset; }
+
+let currentProfile = (function(){ try{return localStorage.getItem('guemiz_profile');}catch(e){return null;} })();
+let state = {done:{},streak:0};
+function loadState(){ try{ state=JSON.parse(localStorage.getItem('guemiz_state_'+currentProfile))||{done:{},streak:0}; }catch(e){ state={done:{},streak:0}; } }
+function save(){ try{ localStorage.setItem('guemiz_state_'+currentProfile, JSON.stringify(state)); }catch(e){} }
 
 function rang(p){ let r="Mousse"; for(const [s,n] of RANGS){ if(p>=s) r=n; } return r; }
+function myScore(){ return (currentProfile && scores && scores[currentProfile]) || 0; }
 function refreshScore(){
-  document.getElementById("pts").textContent = state.pts;
-  document.getElementById("streak").textContent = state.streak;
-  document.getElementById("rang").textContent = rang(state.pts);
+  const e=document.getElementById("pts"); if(e) e.textContent=myScore();
+  const st=document.getElementById("streak"); if(st) st.textContent=(state&&state.streak)||0;
+  const r=document.getElementById("rang"); if(r) r.textContent=rang(myScore());
 }
-function addPts(n){ state.pts += n; save(); refreshScore(); }
+function addPts(n){
+  if(!currentProfile) return;
+  if(db){ db.ref('/guemiz/scores/'+currentProfile).transaction(c=>(c||0)+n); }
+  else { scores[currentProfile]=(scores[currentProfile]||0)+n; refreshScore(); }
+}
+
+/* ----- Connexion / profils ----- */
+function renderProfiles(){
+  const g=document.getElementById('profileGrid'); g.innerHTML='';
+  PROFILES.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='prof'; b.style.background=p.color;
+    b.innerHTML=`<span class="pemoji">${p.emoji}</span>${p.name}`;
+    b.onclick=()=>pickProfile(p.id);
+    g.appendChild(b);
+  });
+}
+function pickProfile(id){
+  currentProfile=id; try{localStorage.setItem('guemiz_profile',id);}catch(e){}
+  loadState();
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  renderProfBar(); refreshScore(); renderHome();
+}
+function changeProfile(){
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login').classList.remove('hidden');
+}
+function renderProfBar(){
+  const p=profById(currentProfile);
+  document.getElementById('profBar').innerHTML=
+    `<span class="proftag">${p.emoji} ${p.name}</span>`+
+    `<button onclick="openBoard()">🏅 Classement</button>`+
+    `<button onclick="changeProfile()">↺ Changer</button>`;
+}
+
+/* ----- Classement (leaderboard) ----- */
+let boardOpen=false;
+function openBoard(){ boardOpen=true; document.getElementById('boardOverlay').classList.remove('hidden'); document.getElementById('resetMsg').textContent=''; renderBoard(); }
+function closeBoard(){ boardOpen=false; document.getElementById('boardOverlay').classList.add('hidden'); }
+function renderBoard(){
+  const list=PROFILES.map(p=>({p, s:(scores&&scores[p.id])||0})).sort((a,b)=>b.s-a.s);
+  const medals=['🥇','🥈','🥉','🎖️'];
+  document.getElementById('boardList').innerHTML=list.map((x,i)=>
+    `<div class="brow${x.p.id===currentProfile?' me':''}"><div class="rank">${medals[i]||(i+1)}</div>`+
+    `<div class="av" style="background:${x.p.color}">${x.p.emoji}</div>`+
+    `<div class="bn">${x.p.name}</div><div class="bs">${x.s} pts</div></div>`).join('');
+}
+function resetScores(){
+  const msg=document.getElementById('resetMsg');
+  if(!db){ msg.className='codemsg ko'; msg.textContent='Connexion Internet requise.'; return; }
+  db.ref('/guemiz/meta/lastReset').once('value').then(s=>{
+    const last=s.val()||0, week=7*24*3600*1000, dt=nowTs()-last;
+    if(last && dt<week){ const d=Math.ceil((week-dt)/(24*3600*1000)); msg.className='codemsg ko'; msg.textContent='Déjà fait cette semaine. Réessaie dans '+d+' j.'; return; }
+    const z={}; PROFILES.forEach(p=>z[p.id]=0);
+    db.ref('/guemiz/scores').set(z);
+    db.ref('/guemiz/meta/lastReset').set(nowTs());
+    msg.className='codemsg'; msg.style.color='var(--vert)'; msg.textContent='✅ Scores remis à zéro pour tout le monde !';
+  });
+}
 
 let currentWeek = Object.keys(DATA)[0];
 
@@ -551,7 +712,7 @@ function renderHome(){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function goHome(){ renderHome(); }
+function goHome(){ if(typeof mp!=='undefined'&&mp&&mp.ref){ mp.ref.off(); mp.ref=null; } if(typeof mpClearTimers==='function') mpClearTimers(); renderHome(); }
 
 function openDay(j){
   const d=DATA[currentWeek].jours[j];
@@ -622,7 +783,7 @@ function revealDebat(key,pts){
   const args=document.getElementById("debargs");
   if(teaser) teaser.style.display="none";
   if(args) args.style.display="grid";
-  if(!state.done[key]){ state.done[key]=true; addPts(pts); }
+  if(!state.done[key]){ state.done[key]=true; addPts(pts); save(); }
   const el=document.getElementById("debdone");
   el.classList.add("show");
   el.innerHTML="🎉 Code validé ! Compare maintenant tes idées avec les arguments préparés.";
@@ -707,29 +868,171 @@ function runQuiz(quiz,containerId,jourKey,ptsPer,isBonus){
   draw();
 }
 
+/* ============ QUIZ BONUS MULTIJOUEUR (façon Kahoot) ============ */
+const QDUR=20000; // 20 s par question
+let mp={pin:null,isHost:false,ref:null,room:null,tInt:null,hostT:null,bonus:null};
+
 function renderBonus(d,j,c){
-  const id="bonusq_"+currentWeek;
+  mp.bonus=d;
   c.innerHTML=`<div class="card" style="background:linear-gradient(135deg,#fff7e6,#ffe9c2)">
     <span class="kicker" style="background:#ffe1a8;color:#8a5a00">${d.kicker}</span>
     <div class="titre">${d.titre}</div>
     <div class="soustitre">${d.soustitre}</div>
   </div>
   <div class="card">
-    <b style="color:var(--bleu)">${d.recapTitre}</b>
-    <div id="${id}"></div>
+    <b style="color:var(--bleu)">🎮 Quiz en équipe (façon Kahoot)</b>
+    <p style="color:var(--gris);font-size:14px;margin:6px 0 12px">Chacun sur son téléphone ! Un joueur <b>crée la partie</b>, les autres la <b>rejoignent</b> avec le code. Quand tout le monde est connecté, on lance : la bonne réponse <b>ET</b> la plus rapide marquent le plus de points.</p>
+    <div class="mpchoice">
+      <button class="bigbtn host" onclick="mpHostCreate()">🎬 Créer la partie<small>Tu affiches le code, les autres rejoignent</small></button>
+      <button class="bigbtn join" onclick="mpShowJoin()">📲 Rejoindre une partie<small>Tu as un code à 4 chiffres</small></button>
+    </div>
+    <div id="mpArea" style="margin-top:14px"></div>
   </div>
   <div class="card">
     <b style="color:var(--corail)">${d.defiTitre}</b>
     <ul style="margin:10px 0 0 18px">${d.defis.map(x=>`<li style="margin:10px 0">${x}</li>`).join("")}</ul>
-    <div class="row"><button class="btn btn-primary" onclick="goHome()">Terminer la semaine 🎉</button></div>
   </div>`;
-  runQuiz(d.quiz,id,j,10,true);
+}
+
+function mpArea(){ return document.getElementById('mpArea'); }
+function mpOffline(){ if(!db){ if(mpArea()) mpArea().innerHTML='<div class="note">⚠️ Le mode multijoueur a besoin d\'Internet. Vérifie ta connexion.</div>'; return true;} return false; }
+function playersArr(room){ return Object.keys(room.players||{}).map(id=>Object.assign({id},room.players[id])); }
+function mpClearTimers(){ if(mp.tInt){clearInterval(mp.tInt);mp.tInt=null;} if(mp.hostT){clearTimeout(mp.hostT);mp.hostT=null;} }
+
+function mpHostCreate(){
+  if(mpOffline()) return;
+  const pin=(''+Math.floor(1000+Math.random()*9000));
+  const me=profById(currentProfile);
+  mp.pin=pin; mp.isHost=true; mp.ref=db.ref('/guemiz/rooms/'+pin);
+  mp.ref.set({status:'lobby',host:currentProfile,week:currentWeek,qIndex:-1,startAt:0,scored:false,
+    questions:mp.bonus.quiz.map(q=>({q:q.q,opts:q.opts,correct:q.correct}))});
+  mp.ref.child('players/'+currentProfile).set({name:me.name,emoji:me.emoji,color:me.color,score:0});
+  mp.ref.on('value', s=>mpRender(s.val()));
+}
+function mpShowJoin(){
+  if(mpOffline()) return;
+  mpArea().innerHTML=`<div class="pinbox"><div style="font-weight:700;margin-bottom:8px">Entre le code de la partie</div>
+    <input id="pinIn" class="pininput" inputmode="numeric" maxlength="4" placeholder="0000">
+    <div class="row"><button class="btn btn-primary" onclick="mpJoin()">Rejoindre</button></div>
+    <div id="joinMsg" class="codemsg"></div></div>`;
+  setTimeout(()=>{const e=document.getElementById('pinIn'); if(e)e.focus();},50);
+}
+function mpJoin(){
+  const pin=(document.getElementById('pinIn').value||'').trim();
+  const msg=document.getElementById('joinMsg');
+  if(!/^\d{4}$/.test(pin)){ msg.className='codemsg ko'; msg.textContent='Code à 4 chiffres.'; return; }
+  db.ref('/guemiz/rooms/'+pin).once('value').then(s=>{
+    if(!s.exists()){ msg.className='codemsg ko'; msg.textContent='Partie introuvable. Vérifie le code.'; return; }
+    const room=s.val(), me=profById(currentProfile);
+    mp.pin=pin; mp.isHost=(room.host===currentProfile); mp.ref=db.ref('/guemiz/rooms/'+pin);
+    const prev=(room.players&&room.players[currentProfile]&&room.players[currentProfile].score)||0;
+    mp.ref.child('players/'+currentProfile).update({name:me.name,emoji:me.emoji,color:me.color,score:prev});
+    mp.ref.on('value', x=>mpRender(x.val()));
+  });
+}
+function mpLeave(){
+  if(mp.ref) mp.ref.off();
+  mpClearTimers();
+  mp={pin:null,isHost:false,ref:null,room:null,tInt:null,hostT:null,bonus:mp.bonus};
+  goHome();
+}
+
+function mpRender(room){
+  mp.room=room;
+  const a=mpArea(); if(!a||!room) return;
+  if(room.status==='lobby') mpLobby(room,a);
+  else if(room.status==='question') mpQuestion(room,a);
+  else if(room.status==='reveal') mpReveal(room,a);
+  else if(room.status==='done') mpDone(room,a);
+}
+function mpLobby(room,a){
+  mpClearTimers();
+  const ps=playersArr(room);
+  a.innerHTML=`<div class="pinbox"><div style="font-weight:700">Code de la partie</div><div class="pin">${mp.pin}</div>
+    <div style="color:var(--gris);font-size:13px">Les autres ouvrent le jeu → Samedi → « Rejoindre » et tapent ce code.</div></div>
+    <div style="text-align:center;margin-top:12px;font-weight:700">Connectés (${ps.length})</div>
+    <div class="players">${ps.map(p=>`<span class="pchip"><span class="dot" style="background:${p.color}"></span>${p.emoji} ${p.name}</span>`).join('')}</div>
+    <div class="row">${mp.isHost?`<button class="btn btn-primary" onclick="mpStart()">🚀 Lancer le quiz</button>`:`<div class="note">En attente du lancement par l'animateur…</div>`}
+      <button class="btn btn-ghost" onclick="mpLeave()">Quitter</button></div>`;
+}
+function mpStart(){ mp.ref.update({status:'question',qIndex:0,startAt:nowTs(),scored:false}); }
+
+function mpQuestion(room,a){
+  const qi=room.qIndex, q=room.questions[qi];
+  const mine = room.answers && room.answers[qi] && room.answers[qi][currentProfile];
+  a.innerHTML=`<div class="qcount">Question ${qi+1} / ${room.questions.length}</div>
+    <div class="ktime"><span id="ktnum">${Math.ceil(QDUR/1000)}</span> s</div>
+    <div class="ktimer"><i id="ktbar" style="width:100%"></i></div>
+    <div class="qtxt">${q.q}</div>
+    <div class="kopts">${q.opts.map((o,k)=>`<button class="kopt k${k}" data-k="${k}" ${mine?'disabled':''}>${o}</button>`).join('')}</div>
+    <div id="kfb" class="codemsg" style="text-align:center"></div>`;
+  if(mine){ a.querySelector('#kfb').innerHTML = mine.correct?`✅ +${mine.points} pts envoyés — attends les autres…`:'❌ Réponse envoyée — attends la suite.'; }
+  else { a.querySelectorAll('.kopt').forEach(b=>{ b.onclick=()=>mpAnswer(room,qi,parseInt(b.dataset.k)); }); }
+  mpClearTimers();
+  mp.tInt=setInterval(()=>{
+    const el=mpArea(); if(!el||!mp.room||mp.room.status!=='question'){ if(mp.tInt){clearInterval(mp.tInt);mp.tInt=null;} return; }
+    const rem=Math.max(0,QDUR-(nowTs()-room.startAt));
+    const tb=el.querySelector('#ktbar'), tn=el.querySelector('#ktnum');
+    if(tb) tb.style.width=(rem/QDUR*100)+'%';
+    if(tn) tn.textContent=Math.ceil(rem/1000);
+    if(rem<=0){ el.querySelectorAll('.kopt').forEach(b=>b.disabled=true); clearInterval(mp.tInt); mp.tInt=null; }
+  },250);
+  if(mp.isHost){
+    const rem=Math.max(0,QDUR-(nowTs()-room.startAt));
+    mp.hostT=setTimeout(()=>{ if(mp.room&&mp.room.status==='question'&&mp.room.qIndex===qi) mp.ref.update({status:'reveal'}); }, rem+500);
+  }
+}
+function mpAnswer(room,qi,k){
+  const q=room.questions[qi];
+  const rem=Math.max(0,QDUR-(nowTs()-room.startAt));
+  if(rem<=0) return;
+  const correct=(k===q.correct);
+  const pts=correct?(500+Math.round(500*rem/QDUR)):0;
+  mp.ref.child('answers/'+qi+'/'+currentProfile).set({choice:k,correct:correct,points:pts,at:nowTs()});
+  if(pts) mp.ref.child('players/'+currentProfile+'/score').transaction(c=>(c||0)+pts);
+  const a=mpArea(); a.querySelectorAll('.kopt').forEach(b=>b.disabled=true);
+  a.querySelector('#kfb').innerHTML = correct?`✅ +${pts} pts ! Rapide et juste.`:'❌ Raté… attends la suite.';
+}
+function mpReveal(room,a){
+  mpClearTimers();
+  const qi=room.qIndex, q=room.questions[qi];
+  const board=playersArr(room).sort((x,y)=>(y.score||0)-(x.score||0));
+  const last=qi+1>=room.questions.length;
+  a.innerHTML=`<div class="qtxt">${q.q}</div>
+    <div class="kopts">${q.opts.map((o,k)=>`<button class="kopt k${k} ${k===q.correct?'win':'faded'}" disabled>${o}</button>`).join('')}</div>
+    <div style="text-align:center;margin:12px 0;font-weight:700">Classement</div>
+    ${board.map((p,i)=>`<div class="brow${p.id===currentProfile?' me':''}"><div class="rank">${i+1}</div><div class="av" style="background:${p.color}">${p.emoji}</div><div class="bn">${p.name}</div><div class="bs">${p.score||0}</div></div>`).join('')}
+    <div class="row">${mp.isHost?`<button class="btn btn-primary" onclick="mpNext()">${last?'🏁 Résultats finaux':'Question suivante →'}</button>`:`<div class="note">L'animateur enchaîne…</div>`}</div>`;
+}
+function mpNext(){
+  const room=mp.room, qi=room.qIndex;
+  if(qi+1>=room.questions.length) mp.ref.update({status:'done'});
+  else mp.ref.update({status:'question',qIndex:qi+1,startAt:nowTs()});
+}
+function mpDone(room,a){
+  mpClearTimers();
+  const board=playersArr(room).sort((x,y)=>(y.score||0)-(x.score||0));
+  if(mp.isHost && !room.scored){
+    mp.ref.child('scored').set(true);
+    board.forEach(p=>{ if(p.score) db.ref('/guemiz/scores/'+p.id).transaction(c=>(c||0)+Math.round(p.score/10)); });
+  }
+  const top=board.slice(0,3), order=[1,0,2];
+  a.innerHTML=`<div style="text-align:center;font-weight:800;font-size:20px;color:var(--bleu-fonce)">🏆 Bravo à tous !</div>
+    <div class="podium">${order.filter(i=>top[i]).map(i=>{const p=top[i];const cl=i===0?'p1':i===1?'p2':'p3';return `<div class="pod ${cl}"><div class="pm">${p.emoji}</div>${p.name}<br>${p.score||0}</div>`;}).join('')}</div>
+    ${board.map((p,i)=>`<div class="brow${p.id===currentProfile?' me':''}"><div class="rank">${i+1}</div><div class="av" style="background:${p.color}">${p.emoji}</div><div class="bn">${p.name}</div><div class="bs">${p.score||0}</div></div>`).join('')}
+    <div class="note" style="text-align:center">Les points du quiz sont ajoutés au classement de la semaine.</div>
+    <div class="row"><button class="btn btn-primary" onclick="mpLeave()">Terminer 🎉</button></div>`;
 }
 
 /* ============ INIT ============ */
+renderProfiles();
 initWeeks();
-refreshScore();
-renderHome();
+if(currentProfile){
+  loadState();
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  renderProfBar(); refreshScore(); renderHome();
+}
 </script>
 </body>
 </html>
