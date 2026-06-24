@@ -65,6 +65,8 @@
   .debcol h4{font-size:16px;margin-bottom:8px}
   .debcol.pour h4{color:#1d8f5a}.debcol.contre h4{color:#d2483b}
   .debcol ul{margin-left:18px;font-size:14px}.debcol li{margin:7px 0}
+  .debteaser{background:#eef4f5;border:2px dashed var(--turquoise);border-radius:14px;padding:18px 16px;text-align:center;margin:14px 0}
+  .debteaser p{margin:8px 0 14px;color:var(--gris);font-size:15px}
   .prompts{background:#eef4f5;border-radius:12px;padding:14px;margin-top:8px}
   .prompts h4{color:var(--bleu);margin-bottom:6px}
   .prompts li{margin:6px 0 6px 18px}
@@ -180,29 +182,32 @@ const DATA = {
       },
       mardi:{
         type:"presentation", ico:"🌍", couleur:"#7c5cbf",
-        lab:"Le Monde en Bref", kicker:"International",
-        titre:"Coupe du Monde 2026 : le foot à l'échelle d'un continent",
-        soustitre:"Du 11 juin au 19 juillet, trois pays accueillent ensemble le plus grand Mondial de l'histoire.",
+        lab:"Le Monde en Bref", kicker:"International · Art & Histoire",
+        titre:"Sagrada Família : le chantier le plus long du monde touche au but",
+        soustitre:"À Barcelone, une basilique commencée en 1882 vient de poser sa plus haute tour.",
         article:[
-          {h:"Un tournoi géant"},
-          {p:"La 23ᵉ Coupe du Monde masculine se joue pour la première fois dans trois pays à la fois : les États-Unis, le Canada et le Mexique. Elle réunit 48 équipes (au lieu de 32 avant) réparties dans 16 villes-hôtes. C'est le Mondial le plus grand jamais organisé."},
-          {h:"Aussi dans l'actu cette semaine"},
-          {p:"🇬🇧 Au Royaume-Uni, le Premier ministre Keir Starmer a démissionné le 22 juin. 🤝 Le 17 juin, un protocole d'accord a été signé pour mettre fin aux tensions entre les États-Unis et l'Iran, avec 60 jours de négociations prévues. 🇨🇴 En Colombie, une nouvelle présidente/un nouveau président a été élu(e) au second tour le 21 juin."},
-          {h:"Pourquoi en parler en famille ?"},
-          {p:"Le sport est une superbe porte d'entrée vers la géographie (où sont ces pays ?), l'économie (combien coûte un Mondial ?) et même la diplomatie (faire jouer des pays ensemble). Et ça donne envie de sortir l'atlas !"}
+          {h:"Une cathédrale jamais terminée… jusqu'à bientôt"},
+          {p:"La Sagrada Família est une immense basilique de Barcelone, en Espagne. Sa construction a commencé en 1882 — il y a près de 145 ans ! En juin 2026, on a inauguré sa tour centrale, la « tour de Jésus-Christ », qui culmine à environ 172 mètres. Elle devient ainsi l'une des plus hautes églises du monde."},
+          {h:"Le génie derrière l'œuvre : Antoni Gaudí"},
+          {p:"L'architecte Antoni Gaudí y a consacré la fin de sa vie. Son style est unique : des formes inspirées de la nature (arbres, coquillages, os), des couleurs et de la lumière partout. Gaudí est mort en 1926, renversé par un tramway. La tour a justement été inaugurée 100 ans, jour pour jour, après sa mort."},
+          {h:"Pourquoi c'est passionnant ?"},
+          {p:"C'est un pont entre art, sciences (la géométrie de Gaudí est étudiée par les ingénieurs), histoire et patience humaine : des générations entières travaillent sur le même monument. Une belle leçon sur ce qu'on peut bâtir quand on voit loin."}
         ],
-        saviez:"Avec 48 équipes, ce Mondial compte <b>104 matchs</b> au total — contre 64 lors des éditions précédentes. De quoi remplir tout l'été.",
-        source:{txt:"Sources : Wikipédia « Juin 2026 », Euronews", url:"https://fr.wikipedia.org/wiki/Juin_2026"},
+        saviez:"Gaudí disait, à propos de la lenteur du chantier : « <b>Mon client n'est pas pressé</b> » — il parlait de Dieu. Près de 145 ans plus tard, on lui donne raison !",
+        source:{txt:"Source : Wikipédia « Juin 2026 »", url:"https://fr.wikipedia.org/wiki/Juin_2026"},
         quiz:[
-          {q:"Combien de pays organisent la Coupe du Monde 2026 ?",
-           opts:["Un seul","Deux","Trois","Cinq"],correct:2,
-           exp:"États-Unis, Canada et Mexique accueillent le tournoi ensemble : une première."},
-          {q:"Combien d'équipes participent à ce Mondial ?",
-           opts:["24","32","40","48"],correct:3,
-           exp:"On est passé de 32 à 48 équipes, d'où un tournoi beaucoup plus long."},
-          {q:"Quel dirigeant a démissionné le 22 juin 2026 ?",
-           opts:["Le Premier ministre britannique Keir Starmer","Le président français","Le chancelier allemand","Le président américain"],correct:0,
-           exp:"Keir Starmer, Premier ministre du Royaume-Uni, a quitté ses fonctions ce jour-là."}
+          {q:"Dans quelle ville se trouve la Sagrada Família ?",
+           opts:["Madrid","Barcelone","Lisbonne","Rome"],correct:1,
+           exp:"Elle est à Barcelone, en Catalogne (Espagne)."},
+          {q:"Quel architecte de génie a façonné ce monument ?",
+           opts:["Gustave Eiffel","Antoni Gaudí","Léonard de Vinci","Le Corbusier"],correct:1,
+           exp:"Antoni Gaudí, célèbre pour son style inspiré de la nature."},
+          {q:"En quelle année la construction a-t-elle commencé ?",
+           opts:["1882","1950","2000","2020"],correct:0,
+           exp:"En 1882 : un chantier qui dure depuis près d'un siècle et demi !"},
+          {q:"Où Gaudí trouvait-il son inspiration pour ses formes ?",
+           opts:["Les machines","La nature","Les ordinateurs","Les pyramides"],correct:1,
+           exp:"Arbres, coquillages, os… la nature était son grand modèle."}
         ]
       },
       mercredi:{
@@ -244,18 +249,18 @@ const DATA = {
           {q:"Le chlordécone a été utilisé en Guadeloupe entre…",
            opts:["1922 et 1945","1972 et 1993","2000 et 2015","Depuis 2020"],correct:1,
            exp:"De 1972 à 1993, dans les bananeraies."},
-          {q:"La Coupe du Monde 2026 se termine le…",
-           opts:["19 juillet","1er juin","31 août","25 décembre"],correct:0,
-           exp:"Du 11 juin au 19 juillet 2026."},
+          {q:"La Sagrada Família, à Barcelone, a été imaginée par…",
+           opts:["Picasso","Antoni Gaudí","Mozart","Coco Chanel"],correct:1,
+           exp:"L'architecte Antoni Gaudí, au style inspiré de la nature."},
           {q:"Une requête à une IA consomme environ… qu'une recherche Google.",
            opts:["2 fois moins","Pareil","Jusqu'à 10 fois plus","100 fois moins"],correct:2,
            exp:"D'où le débat sur le coût écologique de l'IA."},
           {q:"« Non-lieu » signifie…",
            opts:["Une grosse amende","Pas de procès pénal","Une victoire des victimes","Un nouveau pesticide"],correct:1,
            exp:"La justice estime qu'il n'y aura pas de procès pénal."},
-          {q:"Combien d'équipes au Mondial 2026 ?",
-           opts:["32","36","48","64"],correct:2,
-           exp:"48 équipes, un record."}
+          {q:"Depuis quelle année construit-on la Sagrada Família ?",
+           opts:["1882","1980","2010","2024"],correct:0,
+           exp:"Depuis 1882 : près d'un siècle et demi de chantier !"}
         ]
       },
       vendredi:{
@@ -294,9 +299,9 @@ const DATA = {
           {q:"Quel territoire est au cœur du scandale du chlordécone ?",
            opts:["La Corse","Les Antilles (Guadeloupe & Martinique)","La Bretagne","La Réunion"],correct:1,
            exp:"Guadeloupe et Martinique, à cause des bananeraies."},
-          {q:"Le Mondial 2026 est co-organisé par USA, Mexique et…",
-           opts:["Le Brésil","Le Canada","Le Japon","L'Espagne"],correct:1,
-           exp:"USA + Canada + Mexique."},
+          {q:"Antoni Gaudí puisait son inspiration surtout dans…",
+           opts:["Les machines","La nature","Les jeux vidéo","La politique"],correct:1,
+           exp:"Formes d'arbres, de coquillages, d'os : la nature inspirait tout son art."},
           {q:"Dans le débat de mercredi, on parlait de limiter quoi à l'école ?",
            opts:["Les téléphones","L'intelligence artificielle","Le sport","Les devoirs"],correct:1,
            exp:"L'usage de l'IA : aide ou triche ?"},
@@ -351,29 +356,32 @@ const DATA = {
       },
       mardi:{
         type:"presentation", ico:"🌍", couleur:"#7c5cbf",
-        lab:"Le Monde en Bref", kicker:"International",
-        titre:"La planète foot retient son souffle : la finale approche",
-        soustitre:"Après un mois de matchs, le Mondial 2026 entre dans sa phase décisive.",
+        lab:"Le Monde en Bref", kicker:"International · Sciences & Espace",
+        titre:"Les pionnières de l'espace : ces femmes qui ont visé les étoiles",
+        soustitre:"L'exploration spatiale n'est pas qu'une histoire d'hommes — loin de là.",
         article:[
-          {h:"La fin du suspense"},
-          {p:"Début juillet, la Coupe du Monde 2026 arrive dans sa phase à élimination directe : chaque match peut être le dernier. Les 48 équipes du départ ne sont plus qu'une poignée à viser le titre, avant la finale du 19 juillet."},
-          {h:"Plus qu'un jeu"},
-          {p:"Un Mondial, c'est aussi des milliards d'euros d'économie, des millions de touristes, et de grandes questions : faut-il construire d'immenses stades ? Quel est l'impact écologique des déplacements ? Le sport peut-il rapprocher des pays qui s'entendent mal ?"},
-          {h:"Le savais-tu ?"},
-          {p:"La Coupe du Monde est l'événement le plus regardé de la planète, devant même les Jeux Olympiques. Des familles du monde entier se rassemblent devant le même match, à la même heure."}
+          {h:"La première femme dans l'espace"},
+          {p:"En 1963, la Soviétique Valentina Terechkova devient la première femme à voler dans l'espace. Elle a fait 48 fois le tour de la Terre, seule à bord de sa capsule. À l'époque, beaucoup pensaient que c'était « impossible » pour une femme. Elle a prouvé le contraire."},
+          {h:"Les calculatrices de génie"},
+          {p:"Dans les années 1960, l'Américaine Katherine Johnson calculait à la main les trajectoires des fusées de la NASA. Ses calculs ont permis d'envoyer des astronautes sur la Lune. Longtemps invisibles, ces mathématiciennes sont aujourd'hui reconnues comme des héroïnes de la science."},
+          {h:"Et aujourd'hui ?"},
+          {p:"Des agences comme la NASA ou l'ESA (Europe) préparent le retour de l'humanité sur la Lune, et cette fois des femmes en feront partie. L'espace devient un terrain où le talent compte plus que le genre."}
         ],
-        saviez:"La finale d'une Coupe du Monde peut être suivie par plus d'<b>1 milliard de personnes</b> en même temps : presque un humain sur huit !",
-        source:{txt:"Source : Wikipédia « Juin 2026 »", url:"https://fr.wikipedia.org/wiki/Juin_2026"},
+        saviez:"Pour aller dans l'espace, il faut une fusée capable d'atteindre environ <b>28 000 km/h</b> : c'est la vitesse nécessaire pour se mettre en orbite autour de la Terre sans retomber !",
+        source:{txt:"Repères de culture générale (histoire des sciences)", url:"https://fr.wikipedia.org/wiki/Valentina_Terechkova"},
         quiz:[
-          {q:"En phase à élimination directe, une équipe qui perd…",
-           opts:["Rejoue le lendemain","Est éliminée","Gagne un point","Change de pays"],correct:1,
-           exp:"C'est tout ou rien : le perdant est éliminé."},
-          {q:"Quel événement est le plus regardé au monde ?",
-           opts:["La Coupe du Monde de foot","Un concert","Une élection","Un lancement de fusée"],correct:0,
-           exp:"Devant même les Jeux Olympiques."},
-          {q:"La finale du Mondial 2026 a lieu le…",
-           opts:["19 juillet","1er juillet","14 juillet","31 août"],correct:0,
-           exp:"Le 19 juillet 2026."}
+          {q:"Qui fut la première femme à voler dans l'espace, en 1963 ?",
+           opts:["Marie Curie","Valentina Terechkova","Katherine Johnson","Amelia Earhart"],correct:1,
+           exp:"La cosmonaute soviétique Valentina Terechkova, à seulement 26 ans."},
+          {q:"Que faisait Katherine Johnson à la NASA ?",
+           opts:["Elle pilotait les fusées","Elle calculait les trajectoires","Elle construisait les moteurs","Elle filmait les vols"],correct:1,
+           exp:"Ses calculs ont aidé à envoyer des astronautes jusqu'à la Lune."},
+          {q:"Pourquoi faut-il aller très vite pour rester en orbite ?",
+           opts:["Pour avoir chaud","Pour ne pas retomber sur Terre","Pour faire du bruit","Pour économiser du carburant"],correct:1,
+           exp:"À environ 28 000 km/h, on « tombe » sans cesse autour de la Terre : c'est l'orbite."},
+          {q:"Quelle agence spatiale est européenne ?",
+           opts:["La NASA","L'ESA","La SNCF","La FIFA"],correct:1,
+           exp:"L'ESA, l'Agence spatiale européenne."}
         ]
       },
       mercredi:{
@@ -415,8 +423,9 @@ const DATA = {
           {q:"Les sargasses sont un problème surtout quand elles…",
            opts:["Flottent au large","Se décomposent sur la plage","Sont vertes","Gèlent"],correct:1,
            exp:"En pourrissant elles dégagent des gaz toxiques."},
-          {q:"Le Mondial 2026 se termine par une finale le…",
-           opts:["19 juillet","1er août","30 juin","25 juillet"],correct:0,exp:"Le 19 juillet."},
+          {q:"La première femme à voler dans l'espace (1963) s'appelait…",
+           opts:["Valentina Terechkova","Katherine Johnson","Marie Curie","Mae Jemison"],correct:0,
+           exp:"La cosmonaute soviétique Valentina Terechkova."},
           {q:"Dans le débat, on discutait de l'âge pour…",
            opts:["Conduire","Les réseaux sociaux","Voter","Travailler"],correct:1,
            exp:"Réseaux sociaux avant 15 ans : pour ou contre ?"},
@@ -467,8 +476,9 @@ const DATA = {
            opts:["La dopamine","La colère","La faim","La soif"],correct:0,exp:"La dopamine, molécule du plaisir."},
           {q:"La mer des Caraïbes appartient à l'océan…",
            opts:["Atlantique","Pacifique","Indien","Arctique"],correct:0,exp:"Atlantique."},
-          {q:"Le Mondial 2026 a combien d'équipes ?",
-           opts:["48","32","16","64"],correct:0,exp:"48 équipes."},
+          {q:"Katherine Johnson est célèbre pour avoir, à la NASA…",
+           opts:["Calculé les trajectoires des fusées","Cuisiné pour les astronautes","Piloté la Lune","Inventé Internet"],correct:0,
+           exp:"Ses calculs ont aidé à atteindre la Lune."},
           {q:"Le sommeil aide surtout à…",
            opts:["Consolider la mémoire","Grandir les cheveux","Maigrir","Rien"],correct:0,exp:"À mémoriser et récupérer."}
         ],
@@ -573,26 +583,33 @@ function renderPresentation(d,j){
 
 function renderDebat(d,j){
   const key=currentWeek+"_"+j;
+  const seen = !!state.done[key];
+  const argsHTML = `<div class="debcol pour"><h4>✅ ${d.pour.titre}</h4><ul>${d.pour.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+      <div class="debcol contre"><h4>⛔ ${d.contre.titre}</h4><ul>${d.contre.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>`;
   return `<div class="card">
     <span class="kicker">${d.kicker}</span>
     <div class="titre">${d.titre}</div>
     <div class="note">${d.contexte}</div>
-    <div class="debcols">
-      <div class="debcol pour"><h4>✅ ${d.pour.titre}</h4><ul>${d.pour.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>
-      <div class="debcol contre"><h4>⛔ ${d.contre.titre}</h4><ul>${d.contre.args.map(a=>`<li>${a}</li>`).join("")}</ul></div>
+    <div class="prompts"><h4>🗣️ On débat d'abord en famille (à voix haute)</h4><ul>${d.prompts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
+    <div id="debteaser" class="debteaser" style="display:${seen?'none':'block'}">
+      <div style="font-size:36px">🤔💬</div>
+      <p><b>À vous de jouer !</b> Chacun choisit un camp et défend ses idées avec ses propres mots. Quand vous avez bien débattu, révélez les arguments préparés pour les comparer.</p>
+      <button class="btn btn-primary" onclick="revealDebat('${key}',${d.points})">🔓 On a débattu — révéler les arguments (+${d.points} pts)</button>
     </div>
-    <div class="prompts"><h4>🗣️ Pour aller plus loin (en famille)</h4><ul>${d.prompts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
-    <div class="row">
-      <button class="btn btn-primary" onclick="finishDebat('${key}',${d.points})">On a débattu ! (+${d.points} pts)</button>
-      <button class="btn btn-ghost" onclick="goHome()">Retour</button>
-    </div>
-    <div id="debdone" class="feedback r" style="margin-top:14px"></div>
+    <div id="debargs" class="debcols" style="display:${seen?'grid':'none'}">${argsHTML}</div>
+    <div id="debdone" class="feedback r ${seen?'show':''}" style="margin-top:14px">${seen?'✅ Arguments révélés — compare-les avec vos idées de famille !':''}</div>
+    <div class="row" style="margin-top:14px"><button class="btn btn-ghost" onclick="goHome()">Retour au menu</button></div>
   </div>`;
 }
-function finishDebat(key,pts){
+function revealDebat(key,pts){
+  const teaser=document.getElementById("debteaser");
+  const args=document.getElementById("debargs");
+  if(teaser) teaser.style.display="none";
+  if(args) args.style.display="grid";
   if(!state.done[key]){ state.done[key]=true; addPts(pts); }
   const el=document.getElementById("debdone");
-  el.classList.add("show"); el.innerHTML="🎉 Bravo, argumenter c'est déjà gagner ! Points ajoutés. Rendez-vous demain.";
+  el.classList.add("show");
+  el.innerHTML="🎉 Bravo ! Argumenter soi-même, c'est déjà gagner. Compare maintenant tes idées avec les arguments préparés.";
 }
 
 /* ---- Quiz engine partagé ---- */

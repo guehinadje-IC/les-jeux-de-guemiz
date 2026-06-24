@@ -26,20 +26,22 @@ Jeu familial interactif autour de l'actualité (Guadeloupe + monde), des débats
 > **✅ Semaines 1 et 2 : déjà entièrement écrites dans le jeu.**
 > Semaines 3 à 10 : thèmes proposés ci-dessous, à remplir chaque semaine (≈ 30 min, voir guide plus bas).
 
-| Sem. | Dates | Thème | Lundi (Guadeloupe) | Mardi (Monde) | Mercredi (Débat) |
-|------|-------|-------|--------------------|----------------|-------------------|
-| **S1** ✅ | 24-28 juin | L'été où le monde bouge | Chlordécone : le non-lieu | Coupe du Monde 2026 | IA à l'école : pour/contre ? |
-| **S2** ✅ | 29 juin-4 juil | Mer, sport et grandes questions | Sargasses : fléau ou ressource | Finale du Mondial approche | Réseaux sociaux avant 15 ans ? |
-| **S3** | 6-11 juil | Eau et ressources | L'accès à l'eau potable en Guadeloupe | Sécheresses dans le monde | Faut-il rationner l'eau l'été ? |
-| **S4** | 13-18 juil | Mémoire et identité (14 juillet) | Le créole : langue à protéger ? | Fête nationale : d'où vient le 14 juillet ? | Faut-il enseigner les langues régionales à l'école ? |
-| **S5** | 20-25 juil | Sciences et espace | Volcan de la Soufrière : surveillance | Exploration spatiale 2026 | Coloniser Mars : rêve utile ou gaspillage ? |
-| **S6** | 27 juil-1 août | Alimentation et santé | Produire local aux Antilles | Malbouffe et sucre dans le monde | Taxer les sodas : bonne idée ? |
-| **S7** | 3-8 août | Climat et nature | Cyclones : se préparer en Guadeloupe | Records de chaleur mondiaux | Voyager en avion : faut-il culpabiliser ? |
-| **S8** | 10-15 août | Culture et patrimoine | Le gwoka, trésor guadeloupéen | Patrimoine mondial UNESCO | Faut-il rendre les œuvres d'art volées ? |
-| **S9** | 17-22 août | Argent et numérique | Vie chère aux Antilles | Cryptomonnaies et arnaques | L'argent de poche : à quel âge, combien ? |
-| **S10** | 24-29 août | Bilan et rentrée | Le tourisme durable en Guadeloupe | Rentrée scolaire dans le monde | Les notes à l'école : utiles ou stressantes ? |
+> 🎯 **Le mardi « Monde » est volontairement varié et culturellement riche** (art, sciences, histoire, grandes figures, cultures du monde) — pensé pour intéresser un public d'ados, surtout les jeunes filles, avec un vrai objectif d'apprentissage. Pas seulement de l'actu « chaude » : aussi des repères de culture générale qui resservent toute l'année.
 
-*(Les jeudi/vendredi/samedi de chaque semaine reprennent le contenu des trois premiers jours.)*
+| Sem. | Dates | Thème | Lundi (Guadeloupe) | Mardi (Monde · culture G) | Mercredi (Débat) |
+|------|-------|-------|--------------------|----------------|-------------------|
+| **S1** ✅ | 24-28 juin | L'été où le monde bouge | Chlordécone : le non-lieu | **Sagrada Família & Gaudí** (art/archi) | IA à l'école : pour/contre ? |
+| **S2** ✅ | 29 juin-4 juil | Mer, sciences et grandes questions | Sargasses : fléau ou ressource | **Les pionnières de l'espace** (sciences) | Réseaux sociaux avant 15 ans ? |
+| **S3** | 6-11 juil | Femmes qui ont changé le monde | L'accès à l'eau potable en Guadeloupe | **Marie Curie & les femmes prix Nobel** | Faut-il rationner l'eau l'été ? |
+| **S4** | 13-18 juil | Mémoire et identité (14 juillet) | Le créole : langue à protéger ? | **La Révolution française & la Déclaration des droits** | Faut-il enseigner les langues régionales ? |
+| **S5** | 20-25 juil | Arts et chefs-d'œuvre | Le gwoka, trésor guadeloupéen | **Frida Kahlo & les grandes artistes** | L'art doit-il être « utile » ? |
+| **S6** | 27 juil-1 août | Corps et cerveau | Produire local aux Antilles | **Comment fonctionne le cerveau ado** (neurosciences) | Taxer les sodas : bonne idée ? |
+| **S7** | 3-8 août | Océans et planète | Cyclones : se préparer en Guadeloupe | **Les océans, poumons de la Terre** (biodiversité) | Voyager en avion : faut-il culpabiliser ? |
+| **S8** | 10-15 août | Cultures du monde | Patrimoine antillais & UNESCO | **Langues et écritures du monde** | Faut-il rendre les œuvres d'art volées ? |
+| **S9** | 17-22 août | Inventions et numérique | Vie chère aux Antilles | **De l'imprimerie à Internet : les inventions clés** | L'argent de poche : à quel âge, combien ? |
+| **S10** | 24-29 août | Droits et avenir | Le tourisme durable en Guadeloupe | **Malala & le droit des filles à l'école** | Les notes à l'école : utiles ou stressantes ? |
+
+*(Les jeudi/vendredi/samedi de chaque semaine reprennent le contenu des trois premiers jours. Idées de figures inspirantes pour les ados : Valentina Terechkova, Katherine Johnson, Marie Curie, Frida Kahlo, Malala, Simone Veil, Ada Lovelace, Wangari Maathai…)*
 
 ---
 
